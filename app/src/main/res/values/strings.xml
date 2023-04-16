@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">PFG_HT_SerrAlertas</string>
+    <string name="descriptor_spinner_perfiles">Seleccione un perfil</string>
+</resources>
