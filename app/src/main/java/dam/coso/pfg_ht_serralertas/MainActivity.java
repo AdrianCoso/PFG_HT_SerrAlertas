@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -66,6 +67,9 @@ public class MainActivity extends AppCompatActivity {
         Perfil perfilSeleccionado = listaPerfiles.get(position);
         Cursor alertas = db.mostrarAlertasPorPerfil(perfilSeleccionado.getIdPerfil());
         LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,0);
+        params.weight = 1;
         if (alertas.moveToFirst()) {
             int i = 1;
             do {
@@ -78,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
 
                 CardView color = (CardView) view.findViewById(R.id.cv_color_alerta);
                 color.setCardBackgroundColor(alertas.getInt(2));
+                view.setLayoutParams(params);
                 listaAlertas.addView(view);
                 i++;
             } while (alertas.moveToNext());
