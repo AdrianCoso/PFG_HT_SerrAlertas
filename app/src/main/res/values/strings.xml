@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">PFG_HT_SerrAlertas</string>
     <string name="descriptor_spinner_perfiles">Seleccione un perfil</string>
+    <string name="options_bluetooth">Bluetooth</string>
+    <string name="options_notifications">Notificaciones</string>
+    <string name="options_profiles">Administrar perfiles</string>
 </resources>

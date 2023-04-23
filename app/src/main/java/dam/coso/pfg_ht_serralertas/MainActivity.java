@@ -1,17 +1,22 @@
 package dam.coso.pfg_ht_serralertas;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -26,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<String> nombresPerfiles = new ArrayList<>();
     private Cursor cursorPerfiles;
     private DbAlertas db;
+    private String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +66,34 @@ public class MainActivity extends AppCompatActivity {
         listaAlertas = (LinearLayout) findViewById(R.id.linear_lista_alertas);
 
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.MnOpBluetooth:
+                Log.d(TAG, "Pulsada opción bluetooth" );
+                return true;
+
+
+            case R.id.MnOpNotifications:
+                Log.d(TAG, "Pulsada opción notificaciones");
+                return true;
+
+            case R.id.MnOpProfile:
+                Log.d(TAG,"Pulsada opción perfiles");
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void cargarAlertas(int position) {
