@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
@@ -80,6 +81,9 @@ public class MainActivity extends AppCompatActivity {
         switch (id) {
             case R.id.MnOpBluetooth:
                 Log.d(TAG, "Pulsada opción bluetooth" );
+                // Crear el intent para ir a la actividad que gestiona el bluetooth
+                Intent i = new Intent(this, BtConfigActivity.class);
+                startActivity(i);
                 return true;
 
 
