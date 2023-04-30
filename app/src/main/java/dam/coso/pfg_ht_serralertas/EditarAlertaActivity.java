@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -13,7 +15,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageSwitcher;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,15 +26,17 @@ import dam.coso.pfg_ht_serralertas.entidades.Alerta;
 import yuku.ambilwarna.AmbilWarnaDialog;
 
 public class EditarAlertaActivity extends AppCompatActivity {
-
-
     private static final String TAG = "EditarAlertaActivity";
     Alerta alerta;
     View vistaPreviaColor;
     int colorDefecto;
     DbAlertas db;
     private ActivityResultLauncher<Intent> lanzadorSelectorFotos;
+    private ActivityResultLauncher<Intent> lanzadorSelectorTonos;
     private ImageView vistaPreviaPictograma;
+    private TextView tvNombreTono;
+    private String nombreTono;
+    private Ringtone ringtone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +98,55 @@ public class EditarAlertaActivity extends AppCompatActivity {
                 abrirSelectorImagen();
             }
         });
+
+        // Componente para seleccionar el sonido de la alerta
+        tvNombreTono = (TextView) findViewById(R.id.tvNombreTono);
+        Uri uriTonoActual;
+        if (alerta.getRutaSonido().equals("")) {
+            uriTonoActual = RingtoneManager.getActualDefaultRingtoneUri(EditarAlertaActivity.this, RingtoneManager.TYPE_ALARM);
+        } else {
+            uriTonoActual = Uri.parse(alerta.getRutaSonido());
+        }
+        ringtone = RingtoneManager.getRingtone(EditarAlertaActivity.this, uriTonoActual);
+        nombreTono = ringtone.getTitle(EditarAlertaActivity.this);
+        tvNombreTono.setText(nombreTono);
+        Button btnSonido = (Button) findViewById(R.id.btnSeleccionAudio);
+        lanzadorSelectorTonos = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        Uri uriAudio = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+
+                        ringtone = RingtoneManager.getRingtone(EditarAlertaActivity.this, uriAudio);
+                        //getContentResolver().takePersistableUriPermission(uriAudio, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        alerta.setRutaSonido(uriAudio.toString());
+                        nombreTono = RingtoneManager.getRingtone(EditarAlertaActivity.this, uriAudio).getTitle(EditarAlertaActivity.this);
+                        tvNombreTono.setText(nombreTono);
+                    }
+                }
+        );
+        btnSonido.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                abrirSelectorArchivoAudio();
+            }
+        });
+        // Botón para probar el sonido seleccionado
+        Button btnReproducir = (Button) findViewById(R.id.btn_reproducir_audio);
+        btnReproducir.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ringtone.isPlaying()) {
+                    ringtone.stop();
+                } else {
+                    ringtone.play();
+                }
+
+            }
+        });
+
+        // Funcionalidad para guardar la alerta modificada
         Button botonGuardar = (Button) findViewById(R.id.btnGuardar);
         botonGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,6 +163,39 @@ public class EditarAlertaActivity extends AppCompatActivity {
 
             }
         });
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (ringtone.isPlaying()){
+            ringtone.stop();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (ringtone.isPlaying()) {
+            ringtone.stop();
+        }
+    }
+
+    private void abrirSelectorArchivoAudio() {
+        final Uri tonoActual;
+        if (alerta.getRutaSonido().equals("")) {
+            tonoActual = RingtoneManager.getActualDefaultRingtoneUri(EditarAlertaActivity.this, RingtoneManager.TYPE_ALARM);
+        } else {
+            tonoActual = Uri.parse(alerta.getRutaSonido());
+        }
+        Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM);
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Seleccione un tono de alerta");
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, tonoActual);
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false);
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
+        lanzadorSelectorTonos.launch(intent);
 
     }
 
@@ -145,4 +230,5 @@ public class EditarAlertaActivity extends AppCompatActivity {
                 });
         colorPickerDialogue.show();
     }
+
 }
