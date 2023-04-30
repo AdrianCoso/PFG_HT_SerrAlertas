@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -33,9 +34,9 @@ import dam.coso.pfg_ht_serralertas.entidades.Perfil;
 public class MainActivity extends AppCompatActivity {
     private LinearLayout linearListaAlertas;
     private Spinner spinnerPerfiles;
-    private ArrayList<Perfil> listaPerfiles = new ArrayList<>();
+    private ArrayList<Perfil> listaPerfiles = new ArrayList<Perfil>();
     private ArrayList<Alerta> listaAlertas = new ArrayList<Alerta>();
-
+    int idPerfilSeleccionado;
     private DbAlertas db;
     private String TAG = "MainActivity";
 
@@ -44,6 +45,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Obtener índice de perfil seleccionado por preferencias
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences("DATOS", MODE_PRIVATE);
+        idPerfilSeleccionado = preferences.getInt("perfilSeleccionado", 1);
+
+
         db = new DbAlertas(getApplicationContext());
 
         db.cargarPerfilesALista(listaPerfiles);
@@ -51,16 +57,21 @@ public class MainActivity extends AppCompatActivity {
             db.insertarPerfil("Perfil por defecto");
             db.cargarPerfilesALista(listaPerfiles);
         }
+        int indicePerfilSeleccionado = obtenerIndicePerfil(idPerfilSeleccionado);
 
 
         // Cargar spinner
         PerfilSpinnerAdapter adapter = new PerfilSpinnerAdapter(listaPerfiles);
         spinnerPerfiles = findViewById(R.id.spinner_perfiles);
         spinnerPerfiles.setAdapter(adapter);
+        spinnerPerfiles.setSelection(indicePerfilSeleccionado);
         spinnerPerfiles.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                db.mostrarAlertasPorPerfil(listaPerfiles.get(position).getIdPerfil(), listaAlertas);
+                long idPerfil = listaPerfiles.get(position).getIdPerfil();
+                SharedPreferences pref = getApplicationContext().getSharedPreferences("DATOS", MODE_PRIVATE);
+                pref.edit().putInt("perfilSeleccionado", (int) idPerfil).apply();
+                db.mostrarAlertasPorPerfil(idPerfil, listaAlertas);
                 cargarAlertas();
 
             }
@@ -73,8 +84,15 @@ public class MainActivity extends AppCompatActivity {
 
         linearListaAlertas = (LinearLayout) findViewById(R.id.linear_lista_alertas);
 
+    }
 
-
+    private int obtenerIndicePerfil(int idPerfilSeleccionado) {
+        int indice = 0;
+        for (Perfil perfil :
+                listaPerfiles) {
+            if (perfil.getIdPerfil() == idPerfilSeleccionado) indice = listaPerfiles.indexOf(perfil);
+        }
+        return indice;
     }
 
     @Override
