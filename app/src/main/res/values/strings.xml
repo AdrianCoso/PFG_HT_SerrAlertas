@@ -5,4 +5,13 @@
     <string name="options_notifications">Notificaciones</string>
     <string name="options_profiles">Administrar perfiles</string>
     <string name="lbl_btn_connect_bt">Conectar dispositivo</string>
+    <string name="guardar">Guardar</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="selecciona_pictograma">Seleccionar pictograma</string>
+    <string name="btn_seleccion_color">Selección color</string>
+    <string name="seleccion_color_alerta">Color de fondo</string>
+    <string name="btn_seleccion_audio">Selecciona un sonido</string>
+    <string name="seleccion_audio">Sonido</string>
+    <string name="texto_alerta">Texto</string>
+    <string name="selecciona_picto">Pictograma</string>
 </resources>

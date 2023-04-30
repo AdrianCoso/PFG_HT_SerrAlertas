@@ -5,8 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import android.content.Intent;
-import android.database.Cursor;
+import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,23 +16,26 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
 import dam.coso.pfg_ht_serralertas.adapters.PerfilSpinnerAdapter;
 import dam.coso.pfg_ht_serralertas.data.DbAlertas;
+import dam.coso.pfg_ht_serralertas.entidades.Alerta;
 import dam.coso.pfg_ht_serralertas.entidades.Perfil;
 
 public class MainActivity extends AppCompatActivity {
-    private LinearLayout listaAlertas;
+    private LinearLayout linearListaAlertas;
     private Spinner spinnerPerfiles;
     private ArrayList<Perfil> listaPerfiles = new ArrayList<>();
-    private ArrayList<String> nombresPerfiles = new ArrayList<>();
-    private Cursor cursorPerfiles;
+    private ArrayList<Alerta> listaAlertas = new ArrayList<Alerta>();
+
     private DbAlertas db;
     private String TAG = "MainActivity";
 
@@ -55,7 +60,9 @@ public class MainActivity extends AppCompatActivity {
         spinnerPerfiles.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                cargarAlertas(position);
+                db.mostrarAlertasPorPerfil(listaPerfiles.get(position).getIdPerfil(), listaAlertas);
+                cargarAlertas();
+
             }
 
             @Override
@@ -64,7 +71,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        listaAlertas = (LinearLayout) findViewById(R.id.linear_lista_alertas);
+        linearListaAlertas = (LinearLayout) findViewById(R.id.linear_lista_alertas);
+
 
 
     }
@@ -100,31 +108,50 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void cargarAlertas(int position) {
-        listaAlertas.removeAllViews();
-        Perfil perfilSeleccionado = listaPerfiles.get(position);
-        Cursor alertas = db.mostrarAlertasPorPerfil(perfilSeleccionado.getIdPerfil());
+    private void cargarAlertas() {
+        int i = 1;
+        linearListaAlertas.removeAllViews();
         LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
 
+        TypedArray arrPictogramas = getResources().obtainTypedArray(R.array.array_pictogramas);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,0);
         params.weight = 1;
-        if (alertas.moveToFirst()) {
-            int i = 1;
-            do {
-                View view = inflater.inflate(R.layout.layout_alerta, listaAlertas, false);
-                TextView boton = (TextView) view.findViewById(R.id.tv_boton_alerta);
-                boton.setText("Botón "+ i);
+        for (Alerta alerta :
+                listaAlertas) {
+            View view = inflater.inflate(R.layout.layout_alerta, linearListaAlertas, false);
 
-                TextView nombre = (TextView) view.findViewById(R.id.tv_nombre_alerta);
-                nombre.setText(alertas.getString(1));
+            TextView boton = (TextView) view.findViewById(R.id.tv_boton_alerta);
+            boton.setText("Botón "+ i);
 
-                CardView color = (CardView) view.findViewById(R.id.cv_color_alerta);
-                color.setCardBackgroundColor(alertas.getInt(2));
-                view.setLayoutParams(params);
-                listaAlertas.addView(view);
-                i++;
-            } while (alertas.moveToNext());
+            TextView nombre = (TextView) view.findViewById(R.id.tv_nombre_alerta);
+            nombre.setText(alerta.getTexto());
+
+            ImageView ivPictograma = (ImageView) view.findViewById(R.id.iv_imagen_alerta);
+            String uriImagen = alerta.getRutaImagen();
+            if (uriImagen.equals("")) {
+                Glide.with(this).load(arrPictogramas.getDrawable(i-1)).fitCenter().into(ivPictograma);
+            } else {
+                Glide.with(this).load(uriImagen).into(ivPictograma);
+            }
+
+            CardView color = (CardView) view.findViewById(R.id.cv_color_alerta);
+            color.setCardBackgroundColor(alerta.getColor());
+            view.setLayoutParams(params);
+            int finalI = i;
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(v.getContext(), EditarAlertaActivity.class);
+                    intent.putExtra("idAlerta", alerta.getId());
+                    intent.putExtra("iBoton", finalI);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    v.getContext().startActivity(intent);
+                }
+            });
+            linearListaAlertas.addView(view);
+            i++;
         }
+
     }
 
 }

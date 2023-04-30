@@ -4,16 +4,13 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
 
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 
+import dam.coso.pfg_ht_serralertas.entidades.Alerta;
 import dam.coso.pfg_ht_serralertas.entidades.Perfil;
-
-//import com.example.portada.MensajesBotonera;
-//import com.example.portada.entidades.Botones;
 
 public class DbAlertas extends DbHelper{
 
@@ -31,11 +28,12 @@ public class DbAlertas extends DbHelper{
      */
     public long insertarAlerta(int i){
         long id = 0;
-        try{
-            DbHelper dbHelper =  DbHelper.getInstance(context);
-            SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-            String texto = new StringBuilder().append("Botón ").append(i).toString();
+        DbHelper dbHelper =  DbHelper.getInstance(context);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        try{
+
+            String texto = new StringBuilder().append("Alerta ").append(i).toString();
             int color = i * 100;
             ContentValues values = new ContentValues();
             values.put(CAMPO_TEXTO,texto);
@@ -81,6 +79,8 @@ public class DbAlertas extends DbHelper{
             values.put(CAMPO_ALERTA_3, ids[2]);
             values.put(CAMPO_ALERTA_4, ids[3]);
             id = db.insert(TABLE_PERFILES, null, values);
+            db.close();
+            dbHelper.close();
         } catch (Exception ex) {
             ex.toString();
         }
@@ -126,11 +126,13 @@ public class DbAlertas extends DbHelper{
     }
 
     /**
-     * Selecciona las alertas que corresponden a un perfil determinado
+     * Elimina los objetos de tipo de Alerta de una lista y la vuelve a llenar con objetos que
+     * corresponden a un perfil
+     *
      * @param idPerfil id del perfil cuyas alertas queremos seleccionar
-     * @return Un Cursor conteniendo los registros de las alertas.
+     * @param lista La lista que vamos a llenar con las alertas de ese perfil.
      */
-    public Cursor mostrarAlertasPorPerfil(long idPerfil){
+    public void mostrarAlertasPorPerfil(long idPerfil, ArrayList<Alerta> lista){
         DbHelper dbHelper =  DbHelper.getInstance(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
@@ -141,7 +143,22 @@ public class DbAlertas extends DbHelper{
                 "JOIN "+TABLE_PERFILES+" p ON a.id_alerta = p.A OR a.id_alerta = p.C OR a.id_alerta = p.E OR a.id_alerta = p.G " +
                 "WHERE p.id_perfil = ?";
         Cursor cursor = db.rawQuery(sql, new String[]{String.valueOf(idPerfil)});
-        return cursor;
+        if (cursor.moveToFirst()) {
+            lista.clear();
+            do {
+                Alerta alerta = new Alerta(
+                        cursor.getInt(0),
+                        cursor.getString(1),
+                        cursor.getInt(2),
+                        cursor.getString(3),
+                        cursor.getString(4),
+                        cursor.getInt(5)==1);
+                lista.add(alerta);
+            } while (cursor.moveToNext());
+            db.close();
+            dbHelper.close();
+        }
+
     }
 
 //    public Botones mostrarBoton(int id){
@@ -163,6 +180,35 @@ public class DbAlertas extends DbHelper{
 //        cursorBotones.close();
 //        return boton;
 //    }
+
+    public Alerta mostrarAlerta(int id) {
+        DbHelper dbHelper = DbHelper.getInstance(context);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        Cursor cursor = db.query(
+                TABLE_ALERTAS,
+                null,
+                CAMPO_ID_ALERTA + "=?",
+                new String[]{String.valueOf(id)},
+                null,
+                null,
+                null);
+        Alerta alerta = null;
+        if (cursor.moveToFirst()) {
+            alerta = new Alerta(
+                    cursor.getInt(0),
+                    cursor.getString(1),
+                    cursor.getInt(2),
+                    cursor.getString(3),
+                    cursor.getString(4),
+                    cursor.getInt(5) == 1);
+        }
+
+        db.close();
+        dbHelper.close();
+        return alerta;
+
+    }
 
     /**
      * Modifica los campos de un registro de la tabla alertas
@@ -195,6 +241,7 @@ public class DbAlertas extends DbHelper{
 
         } finally {
             db.close();
+            db.close();
         }
 
         return reg;
@@ -218,32 +265,10 @@ public class DbAlertas extends DbHelper{
             correcto = false;
         } finally {
             db.close();
+            dbHelper.close();
         }
 
         return correcto;
-    }
-
-    public Cursor mostrarPerfiles() {
-        DbHelper dbHelper = new DbHelper(context);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-        Cursor cursor = db.query(TABLE_PERFILES, null, null, null, null, null, null);
-        return cursor;
-
-    }
-
-    public void cargarNombresPerfilesALista(ArrayList<String> nombresPerfiles) {
-        DbHelper dbHelper = DbHelper.getInstance(context);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-        Cursor cursor = db.query(TABLE_PERFILES, new String[] {CAMPO_NOMBRE}, null, null, null, null, null);
-        if (cursor.moveToFirst()) {
-            nombresPerfiles.clear();
-            do {
-                nombresPerfiles.add(cursor.getString(0));
-            } while (cursor.moveToNext());
-
-        }
     }
 
     public void cargarPerfilesALista(ArrayList<Perfil> listaPerfiles) {
@@ -262,6 +287,29 @@ public class DbAlertas extends DbHelper{
             } while (cursor.moveToNext());
 
         }
+        db.close();
+        dbHelper.close();
+    }
+
+    public int modificarAlerta(Alerta alerta) {
+        DbHelper dbHelper = DbHelper.getInstance(context);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(CAMPO_TEXTO, alerta.getTexto());
+        values.put(CAMPO_COLOR, alerta.getColor());
+        values.put(CAMPO_AUDIO, alerta.getRutaSonido());
+        values.put(CAMPO_IMAGEN, alerta.getRutaImagen());
+
+        int i = db.update(
+                TABLE_ALERTAS,
+                values,
+                CAMPO_ID_ALERTA + "=?",
+                new String[]{String.valueOf(alerta.getId())}
+
+        );
+        db.close();
+        dbHelper.close();
+        return i;
     }
 
 //    public Botones obtenerBotonPorMensaje(String mensaje) {

@@ -17,6 +17,14 @@
         android:theme="@style/Theme.PFG_HT_SerrAlertas"
         tools:targetApi="31">
         <activity
+            android:name=".EditarAlertaActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity
             android:name=".BtConfigActivity"
             android:exported="false"
             android:parentActivityName=".MainActivity">
@@ -24,11 +32,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+
         <service
             android:name=".servicios.BtService"
             android:enabled="true"
             android:exported="true" />
-
 
         <activity
             android:name=".MainActivity"

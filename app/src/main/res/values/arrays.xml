@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="array_pictogramas">
+        <item>@drawable/si</item>
+        <item>@drawable/no</item>
+        <item>@drawable/beber</item>
+        <item>@drawable/servicio</item>
+    </array>
+</resources>

@@ -21,7 +21,7 @@
     <LinearLayout
         android:id="@+id/linear_lista_alertas"
         android:layout_width="0dp"
-        android:layout_height="531dp"
+        android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"

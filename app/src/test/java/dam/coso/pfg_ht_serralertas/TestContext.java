@@ -36,7 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class TestContext extends Context {
-    private Resources res;
+    Resources res;
 
     public TestContext(Resources res) {
         this.res = res;
