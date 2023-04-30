@@ -73,5 +73,14 @@ public class BtConfigActivity extends AppCompatActivity {
                 startService(intentServicioBt);
             }
         });
+
+        Button btnDesconectarBt = (Button) findViewById(R.id.btn_desconectar_bt);
+        btnDesconectarBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentServicioBt = new Intent(getApplicationContext(), BtService.class);
+                stopService(intentServicioBt);
+            }
+        });
     }
 }

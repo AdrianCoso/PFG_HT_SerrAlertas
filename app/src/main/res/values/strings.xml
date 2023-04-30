@@ -19,4 +19,5 @@
     <string name="btn_cancelar_nuevo_perfil">Cancelar</string>
     <string name="btn_agregar_nuevo_perfil">Agregar</string>
     <string name="description_fab_nuevo_perfil">Agregar nuevo perfil</string>
+    <string name="lbl_btn_disconnect_bt">Desconectar dispositivo</string>
 </resources>

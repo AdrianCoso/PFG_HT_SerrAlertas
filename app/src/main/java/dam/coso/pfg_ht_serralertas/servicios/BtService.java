@@ -112,6 +112,17 @@ public class BtService extends Service {
         return START_STICKY;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        hiloConexion.cerrarConexion();
+        try {
+            socketBt.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private BluetoothSocket crearSocketBluetooth(BluetoothDevice dispositivo) throws IOException {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
 
@@ -135,6 +146,7 @@ public class BtService extends Service {
 
     private class HiloConexion extends Thread {
         private final InputStream input;
+        private boolean conexionAbierta;
 
         public HiloConexion(BluetoothSocket socket) {
             InputStream tmpInput;
@@ -147,6 +159,7 @@ public class BtService extends Service {
                 throw new RuntimeException(e);
             }
             input = tmpInput;
+            conexionAbierta = true;
         }
 
         @Override
@@ -155,7 +168,7 @@ public class BtService extends Service {
             int numeroBytes;
 
             // Mantener el bucle para escuchar mensajes entrantes
-            while (true) {
+            while (conexionAbierta) {
                 try {
                     numeroBytes = input.read(buffer);
                     //Toast.makeText(BtService.this, "Mensaje recibido", Toast.LENGTH_SHORT).show();
@@ -180,9 +193,17 @@ public class BtService extends Service {
                     break;
                 }
             }
+            try {
+                input.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
 
+        public void cerrarConexion() {
+            this.conexionAbierta = false;
+        }
     }
 
     @Override
