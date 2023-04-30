@@ -86,11 +86,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
+        Intent i;
         switch (id) {
             case R.id.MnOpBluetooth:
                 Log.d(TAG, "Pulsada opción bluetooth" );
                 // Crear el intent para ir a la actividad que gestiona el bluetooth
-                Intent i = new Intent(this, BtConfigActivity.class);
+                i = new Intent(this, BtConfigActivity.class);
                 startActivity(i);
                 return true;
 
@@ -101,6 +102,9 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.MnOpProfile:
                 Log.d(TAG,"Pulsada opción perfiles");
+                // Crear el intent para ir a la actividad con un listado de los perfiles
+                i = new Intent(this, PerfilesActivity.class);
+                startActivity(i);
                 return true;
 
             default:

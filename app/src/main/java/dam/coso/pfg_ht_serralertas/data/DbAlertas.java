@@ -88,7 +88,7 @@ public class DbAlertas extends DbHelper{
         return id;
     }
 
-    public boolean eliminarPefil(int id) {
+    public boolean eliminarPefil(long id) {
         boolean correcto = false;
 
         DbHelper dbHelper = DbHelper.getInstance(context);
@@ -118,6 +118,7 @@ public class DbAlertas extends DbHelper{
                 }
             }
             String where = builder.toString();
+
 
             db.delete(TABLE_ALERTAS, where, alarmas);
 

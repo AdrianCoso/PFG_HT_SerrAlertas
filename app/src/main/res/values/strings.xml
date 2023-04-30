@@ -14,4 +14,9 @@
     <string name="seleccion_audio">Sonido</string>
     <string name="texto_alerta">Texto</string>
     <string name="selecciona_picto">Pictograma</string>
+    <string name="titulo_nuevo_perfil">Nuevo perfil</string>
+    <string name="hint_nuevo_perfil">Nombre del perfil</string>
+    <string name="btn_cancelar_nuevo_perfil">Cancelar</string>
+    <string name="btn_agregar_nuevo_perfil">Agregar</string>
+    <string name="description_fab_nuevo_perfil">Agregar nuevo perfil</string>
 </resources>
