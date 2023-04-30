@@ -1,5 +1,6 @@
 package dam.coso.pfg_ht_serralertas.adapters;
 
+import android.database.DataSetObserver;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,19 @@ import dam.coso.pfg_ht_serralertas.entidades.Perfil;
 
 public class PerfilesListAdapter extends BaseAdapter {
     ArrayList<Perfil> listaPerfiles;
+    DataSetObserver dataSetObserver = new DataSetObserver() {
+        @Override
+        public void onChanged() {
+            super.onChanged();
+            recargarLista();
+        }
+    };
+
+    private void recargarLista() {
+        listaPerfiles = null;
+
+    }
+
     DbAlertas db;
 
     public PerfilesListAdapter(ArrayList<Perfil> listaPerfiles) {
@@ -45,14 +59,15 @@ public class PerfilesListAdapter extends BaseAdapter {
         View view = inflater.inflate(R.layout.item_perfil, parent, false);
 
         TextView tvNombrePerfilLista = (TextView) view.findViewById(R.id.tv_nombre_perfil_lista);
-        tvNombrePerfilLista.setText(listaPerfiles.get(position).getNombre());
+        final String nombrePerfil = listaPerfiles.get(position).getNombre();
+        tvNombrePerfilLista.setText(nombrePerfil);
 
         ImageButton ibBorrarPerfil = (ImageButton) view.findViewById(R.id.ib_borrar_perfil);
         ibBorrarPerfil.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new AlertDialog.Builder(view.getContext())
-                        .setTitle("Eliminar perfil")
+                        .setTitle("Eliminar perfil "+nombrePerfil)
                         .setMessage("Se perderán todas las alertas asociadas al perfil. ¿Está seguro?")
                         .setPositiveButton("Eliminar", (dialog, which) -> {
 
@@ -60,10 +75,9 @@ public class PerfilesListAdapter extends BaseAdapter {
                             try (DbAlertas db = new DbAlertas(view.getContext())) {
                                 db.eliminarPefil(id);
                                 db.cargarPerfilesALista(listaPerfiles);
+                                notifyDataSetChanged();
                             } catch (Exception e) {
                                 e.printStackTrace();
-                            } finally {
-                                db.close();
                             }
                         })
                         .setNegativeButton("Cancelar", null)
