@@ -33,21 +33,23 @@ public class DbAlertas extends DbHelper{
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         try{
 
-            String texto = new StringBuilder().append("Alerta ").append(i).toString();
-            int color = i * 100;
+            String[] textos = new String[] {"Afirmativo", "Negativo", "Agua", "Baño"};
+            String texto = textos[i];
+
             ContentValues values = new ContentValues();
             values.put(CAMPO_TEXTO,texto);
-            values.put(CAMPO_COLOR,color);
+            values.put(CAMPO_COLOR,0);
             values.put(CAMPO_IMAGEN,"");
             values.put(CAMPO_AUDIO,"");
             values.put(CAMPO_ACTIVA, 1);
 
             id = db.insert(TABLE_ALERTAS, null, values);
 
-            db.close();
-            dbHelper.close();
         } catch (Exception ex) {
             ex.toString();
+        } finally {
+            db.close();
+            dbHelper.close();
         }
 
         return id;
@@ -67,7 +69,7 @@ public class DbAlertas extends DbHelper{
             // Insertamos cuatro alertas genéricas a tabla alertas y guardamos cada id;
             long[] ids = new long[4];
             for (int i = 0; i < ids.length; i++) {
-                ids[i] = insertarAlerta(i+1);
+                ids[i] = insertarAlerta(i);
             }
             DbHelper dbHelper = DbHelper.getInstance(context);
             SQLiteDatabase db = dbHelper.getWritableDatabase();
