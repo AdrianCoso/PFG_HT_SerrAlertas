@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.util.UUID;
 
 import dam.coso.pfg_ht_serralertas.MainActivity;
+import dam.coso.pfg_ht_serralertas.MostrarAlertaActivity;
 import dam.coso.pfg_ht_serralertas.R;
 
 public class BtService extends Service {
@@ -174,6 +175,16 @@ public class BtService extends Service {
                     //Toast.makeText(BtService.this, "Mensaje recibido", Toast.LENGTH_SHORT).show();
                     String mensajeRecibido = new String(buffer, 0, numeroBytes);
                     Log.d(TAG, "mensaje recibido"+mensajeRecibido);
+
+                    // Lanzar un intent para mostrar la actividad de alerta con el mensaje recibido
+                    // si es una de las letras de pulsación
+                    if (mensajeRecibido.equals("A") || mensajeRecibido.equals("C") || mensajeRecibido.equals("E") || mensajeRecibido.equals("G")) {
+                        Intent intentAlerta = new Intent(BtService.this, MostrarAlertaActivity.class);
+                        intentAlerta.putExtra("mensaje", mensajeRecibido);
+                        intentAlerta.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intentAlerta);
+
+                    }
 
 
                     // Procesar el mensaje recibido para saber si debemos mostrar el intent

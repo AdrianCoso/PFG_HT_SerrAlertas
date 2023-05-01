@@ -19,6 +19,15 @@
         android:theme="@style/Theme.PFG_HT_SerrAlertas"
         tools:targetApi="31">
         <activity
+            android:name=".MostrarAlertaActivity"
+            android:exported="false"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:excludeFromRecents="true"
+
+            />
+
+        <activity
             android:name=".PerfilesActivity"
             android:exported="false"
             android:parentActivityName=".MainActivity">
