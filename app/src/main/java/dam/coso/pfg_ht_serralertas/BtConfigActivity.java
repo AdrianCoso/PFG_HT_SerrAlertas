@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -23,10 +24,12 @@ import dam.coso.pfg_ht_serralertas.servicios.BtService;
 
 public class BtConfigActivity extends AppCompatActivity {
     String direccionMACSeleccionada;
+    private String TAG = "BtConfigActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate()");
         setContentView(R.layout.activity_bt_config);
 
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -82,5 +85,42 @@ public class BtConfigActivity extends AppCompatActivity {
                 stopService(intentServicioBt);
             }
         });
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy()");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop()");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume()");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d(TAG, "onRestart()");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart()");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause");
     }
 }

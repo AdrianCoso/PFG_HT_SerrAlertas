@@ -41,6 +41,7 @@ public class EditarAlertaActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate()");
         setContentView(R.layout.activity_editar_alerta);
 
         // Obtener los datos de la alerta para inicializar componentes
@@ -169,6 +170,7 @@ public class EditarAlertaActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        Log.d(TAG, "onStop()");
         if (ringtone.isPlaying()){
             ringtone.stop();
         }
@@ -177,6 +179,7 @@ public class EditarAlertaActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.d(TAG, "onDestroy()");
         if (ringtone.isPlaying()) {
             ringtone.stop();
         }
@@ -229,6 +232,30 @@ public class EditarAlertaActivity extends AppCompatActivity {
                     }
                 });
         colorPickerDialogue.show();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume()");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d(TAG, "onRestart()");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart()");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause");
     }
 
 }

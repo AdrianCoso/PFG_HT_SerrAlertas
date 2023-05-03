@@ -124,6 +124,8 @@ public class DbAlertas extends DbHelper{
 
             db.delete(TABLE_ALERTAS, where, alarmas);
 
+            db.close();
+            dbHelper.close();
         }
         return correcto;
     }
@@ -313,6 +315,39 @@ public class DbAlertas extends DbHelper{
         db.close();
         dbHelper.close();
         return i;
+    }
+
+    /**
+     * Devuelve la alerta correspondiente al botón pulsado para un perfil determinado
+     *
+     * @param idPerfilActivo la id del perfil correspondiente
+     * @param mensajeRecibido el mesaje recibido por el dispositivo bt. Corresponde al nombre del campo en el que guardamos la id de la alerta
+     * @return
+     */
+    public Alerta mostrarAlertaRecibida(int idPerfilActivo, String mensajeRecibido) {
+        DbHelper dbHelper = DbHelper.getInstance(context);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        String sql =
+                "SELECT a.* " +
+                        "FROM "+TABLE_ALERTAS+" a " +
+                        "JOIN "+TABLE_PERFILES+" p ON a.id_alerta = p." + mensajeRecibido +
+                        " WHERE p.id_perfil = ?";
+        Cursor cursor = db.rawQuery(sql, new String[]{String.valueOf(idPerfilActivo)});
+
+        if (cursor.moveToFirst()) {
+            Alerta alerta = new Alerta(
+                    cursor.getInt(0),
+                    cursor.getString(1),
+                    cursor.getInt(2),
+                    cursor.getString(3),
+                    cursor.getString(4),
+                    cursor.getInt(5)==1
+            );
+            return alerta;
+        } else {
+            return null;
+        }
     }
 
 //    public Botones obtenerBotonPorMensaje(String mensaje) {

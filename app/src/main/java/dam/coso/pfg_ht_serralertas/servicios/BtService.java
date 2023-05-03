@@ -25,6 +25,7 @@ import java.util.UUID;
 import dam.coso.pfg_ht_serralertas.MainActivity;
 import dam.coso.pfg_ht_serralertas.MostrarAlertaActivity;
 import dam.coso.pfg_ht_serralertas.R;
+import dam.coso.pfg_ht_serralertas.hilos.HiloAlerta;
 
 public class BtService extends Service {
     private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -174,15 +175,13 @@ public class BtService extends Service {
                     numeroBytes = input.read(buffer);
                     //Toast.makeText(BtService.this, "Mensaje recibido", Toast.LENGTH_SHORT).show();
                     String mensajeRecibido = new String(buffer, 0, numeroBytes);
-                    Log.d(TAG, "mensaje recibido"+mensajeRecibido);
+                    Log.d(TAG, "mensaje recibido: "+mensajeRecibido);
 
-                    // Lanzar un intent para mostrar la actividad de alerta con el mensaje recibido
+                    // Lanzar un hilo para mostrar la actividad de alerta con el mensaje recibido
                     // si es una de las letras de pulsación
                     if (mensajeRecibido.equals("A") || mensajeRecibido.equals("C") || mensajeRecibido.equals("E") || mensajeRecibido.equals("G")) {
-                        Intent intentAlerta = new Intent(BtService.this, MostrarAlertaActivity.class);
-                        intentAlerta.putExtra("mensaje", mensajeRecibido);
-                        intentAlerta.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intentAlerta);
+                        HiloAlerta hiloAlerta = new HiloAlerta(getApplicationContext(), mensajeRecibido);
+                        hiloAlerta.run();
 
                     }
 
