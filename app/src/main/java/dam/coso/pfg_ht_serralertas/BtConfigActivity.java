@@ -73,6 +73,7 @@ public class BtConfigActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intentServicioBt = new Intent(getApplicationContext(), BtService.class);
 
+                stopService(intentServicioBt);
                 startService(intentServicioBt);
             }
         });

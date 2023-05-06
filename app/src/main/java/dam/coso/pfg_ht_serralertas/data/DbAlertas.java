@@ -22,9 +22,9 @@ public class DbAlertas extends DbHelper{
 
     /**
      * Inserta una alerta genérica según el número de botón al que queda asociada.
-     * @param i
+     * @param i Determina el texto que se asocia a la alerta por defecto. 0 Afirmativo, 1 Negativo, 2 Agua, 3 Baño.
      * @return La id generada para la la alerta insertada. 0 si ha habido un error con la base de
-     * datos, -1 si ha fallado la inserción
+     * datos, -1 si ha fallado la inserción.
      */
     public long insertarAlerta(int i){
         long id = 0;
@@ -64,6 +64,9 @@ public class DbAlertas extends DbHelper{
      */
     public long insertarPerfil(String nombrePerfil) {
         long id= 0;
+        DbHelper dbHelper = DbHelper.getInstance(context);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
         try{
 
             // Insertamos cuatro alertas genéricas a tabla alertas y guardamos cada id;
@@ -71,8 +74,6 @@ public class DbAlertas extends DbHelper{
             for (int i = 0; i < ids.length; i++) {
                 ids[i] = insertarAlerta(i);
             }
-            DbHelper dbHelper = DbHelper.getInstance(context);
-            SQLiteDatabase db = dbHelper.getWritableDatabase();
 
             ContentValues values = new ContentValues();
             values.put(CAMPO_NOMBRE,nombrePerfil);
@@ -81,17 +82,24 @@ public class DbAlertas extends DbHelper{
             values.put(CAMPO_ALERTA_3, ids[2]);
             values.put(CAMPO_ALERTA_4, ids[3]);
             id = db.insert(TABLE_PERFILES, null, values);
-            db.close();
-            dbHelper.close();
+
         } catch (Exception ex) {
             ex.toString();
+        } finally {
+            db.close();
+            dbHelper.close();
         }
 
         return id;
     }
 
+    /**
+     * Elimina un registro de la tabla de perfiles y todas sus alertas asociadas.
+     * @param id El número de id del registro que se va a eliminar.
+     * @return Booleano que indica si la operación se ha realizado correctamente.
+     */
     public boolean eliminarPefil(long id) {
-        boolean correcto = false;
+        boolean correcto = true;
 
         DbHelper dbHelper = DbHelper.getInstance(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -108,7 +116,9 @@ public class DbAlertas extends DbHelper{
                 alarmas[i] = String.valueOf(cursor.getInt(i));
             }
 
-            db.delete(TABLE_PERFILES, CAMPO_ID_PERFIL+"=?", idPerfil);
+            int alertasEliminadas = db.delete(TABLE_PERFILES, CAMPO_ID_PERFIL+"=?", idPerfil);
+
+            if (alertasEliminadas != 4) correcto = false;
 
             // Creamos la cláusula where concatenando lo que necesitamos para borrar todas las
             // alarmas del perfil seleccionado
@@ -122,8 +132,9 @@ public class DbAlertas extends DbHelper{
             String where = builder.toString();
 
 
-            db.delete(TABLE_ALERTAS, where, alarmas);
+            int perfilesEliminados = db.delete(TABLE_ALERTAS, where, alarmas);
 
+            if (perfilesEliminados != 1) correcto = false;
             db.close();
             dbHelper.close();
         }
@@ -166,26 +177,11 @@ public class DbAlertas extends DbHelper{
 
     }
 
-//    public Botones mostrarBoton(int id){
-//        DbHelper dbHelper =  new DbHelper(context);
-//        SQLiteDatabase db = dbHelper.getWritableDatabase();
-//        Botones boton = new Botones();
-//        Cursor cursorBotones = null;
-//        cursorBotones = db.rawQuery("SELECT * FROM " + TABLE_ALERTAS + " WHERE id_boton="+ id, null);
-//        if (cursorBotones.moveToFirst()){
-//            boton.setId(cursorBotones.getInt(0));
-//            boton.setNumero(cursorBotones.getInt(1));
-//            boton.setTexto(cursorBotones.getString(2));
-//            boton.setColor(cursorBotones.getInt(3));
-//            boton.setImagen(cursorBotones.getString(4));
-//            boton.setAudio(cursorBotones.getString(5));
-//            boton.setActivado(cursorBotones.getString(6));
-//
-//        }
-//        cursorBotones.close();
-//        return boton;
-//    }
-
+    /**
+     * Para mostrar un objeto Alerta según su id.
+     * @param id Número de id de la alerta que deseamos mostrar.
+     * @return Alerta con los campos indicados en el registro correspondiente a la id que pasamos.
+     */
     public Alerta mostrarAlerta(int id) {
         DbHelper dbHelper = DbHelper.getInstance(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -216,66 +212,39 @@ public class DbAlertas extends DbHelper{
     }
 
     /**
-     * Modifica los campos de un registro de la tabla alertas
-     * @param id La id de la alerta que modificamos
-     * @param texto El nuevo texto para la alerta
-     * @param color El nuevo color para la alerta
-     * @param imagen La nueva ruta de imagen para la alerta
-     * @param audio La nueva ruta de audio para la alerta
-     * @return El número de registros afectados. -1 Si ha habido algún problema con la base de datos.
+     * Este método se podría utilizar para activar o desactivar alertas
+     * @param id la ida de la alerta que deseamos activar o desactivar
+     * @param activado El estado actual de la alerta
+     * @return
      */
-    public int editarAlerta(int id, String texto, int color, String imagen, String audio) {
+//    public boolean switchBoton(int id, boolean activado){
+//        boolean correcto = false;
+//
+//        DbHelper dbHelper = DbHelper.getInstance(context);
+//        SQLiteDatabase db = dbHelper.getWritableDatabase();
+//
+//        try{
+//            if (activado) {
+//                db.execSQL("UPDATE "+ TABLE_ALERTAS+" SET activado = 'activado' WHERE id_boton = "+id);
+//            } else {
+//                db.execSQL("UPDATE "+ TABLE_ALERTAS+" SET activado = 'desactivado' WHERE id_boton = "+id);
+//            }
+//            correcto = true;
+//        } catch (Exception ex){
+//            ex.toString();
+//            correcto = false;
+//        } finally {
+//            db.close();
+//            dbHelper.close();
+//        }
+//
+//        return correcto;
+//    }
 
-        DbHelper dbHelper =  DbHelper.getInstance(context);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-        int reg = -1;
-        ContentValues cv = new ContentValues();
-        cv.put(CAMPO_TEXTO, texto);
-        cv.put(CAMPO_COLOR, color);
-        cv.put(CAMPO_IMAGEN, imagen);
-        cv.put(CAMPO_AUDIO, audio);
-        String where = new StringBuilder().append(CAMPO_ID_ALERTA).append("=?").toString();
-        String[] arg = new String[]{String.valueOf(id)};
-
-        try{
-            reg = db.update(TABLE_ALERTAS, cv, where, arg );
-
-        } catch (Exception ex){
-            ex.toString();
-
-        } finally {
-            db.close();
-            db.close();
-        }
-
-        return reg;
-    }
-
-    public boolean switchBoton(int id, boolean activado){
-        boolean correcto = false;
-
-        DbHelper dbHelper = DbHelper.getInstance(context);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-        try{
-            if (activado) {
-                db.execSQL("UPDATE "+ TABLE_ALERTAS+" SET activado = 'activado' WHERE id_boton = "+id);
-            } else {
-                db.execSQL("UPDATE "+ TABLE_ALERTAS+" SET activado = 'desactivado' WHERE id_boton = "+id);
-            }
-            correcto = true;
-        } catch (Exception ex){
-            ex.toString();
-            correcto = false;
-        } finally {
-            db.close();
-            dbHelper.close();
-        }
-
-        return correcto;
-    }
-
+    /**
+     * Vacía una lista con instancias de clase Perfil y la rellena con las que corresponden a los registros de la tabla
+     * @param listaPerfiles Lista que contendrá las instancias.
+     */
     public void cargarPerfilesALista(ArrayList<Perfil> listaPerfiles) {
         DbHelper dbHelper = DbHelper.getInstance(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -296,6 +265,12 @@ public class DbAlertas extends DbHelper{
         dbHelper.close();
     }
 
+    /**
+     * Modifica los campos de un registro de alerta utilizando, por ejemplo un objeto obtenido con
+     * mostrarAlerta. Una vez utilizados los setters de la clase Alerta podemos modificar el registro usando la misma instancia como parámetro.
+     * @param alerta objeto que se desea modificar
+     * @return El número de registros modificados.
+     */
     public int modificarAlerta(Alerta alerta) {
         DbHelper dbHelper = DbHelper.getInstance(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -318,7 +293,8 @@ public class DbAlertas extends DbHelper{
     }
 
     /**
-     * Devuelve la alerta correspondiente al botón pulsado para un perfil determinado
+     * Devuelve la alerta correspondiente al botón pulsado para un perfil determinado.
+     * Este método funciona gracias a que hemos llamado a los campos que contienen las ids de las alertas igual que los mensajes que envía el dispositivo.
      *
      * @param idPerfilActivo la id del perfil correspondiente
      * @param mensajeRecibido el mesaje recibido por el dispositivo bt. Corresponde al nombre del campo en el que guardamos la id de la alerta
@@ -350,30 +326,5 @@ public class DbAlertas extends DbHelper{
         }
     }
 
-//    public Botones obtenerBotonPorMensaje(String mensaje) {
-//        // Encontrar el número que corresponde el botón según el mensaje que hayamos recibido usando el array de mensajes que se pueden recibir
-//        Integer numeroBoton = MensajesBotonera.mapaBotones.get(mensaje);
-//
-//        DbHelper dbHelper =  new DbHelper(context);
-//        SQLiteDatabase db = dbHelper.getWritableDatabase();
-//
-//        Botones boton = new Botones();
-//        Cursor cursorBotones = null;
-//        cursorBotones = db.rawQuery("SELECT * FROM " + TABLE_ALERTAS + " WHERE numero="+ String.valueOf(numeroBoton) +" AND activado = 'activado'", null);
-//        if (cursorBotones.moveToFirst()){
-//            boton.setId_boton(cursorBotones.getInt(0));
-//            boton.setNumero(cursorBotones.getInt(1));
-//            boton.setTexto(cursorBotones.getString(2));
-//            boton.setColor(cursorBotones.getInt(3));
-//            boton.setImagen(cursorBotones.getString(4));
-//            boton.setAudio(cursorBotones.getString(5));
-//
-//        } else {
-//            return null;
-//        }
-//        cursorBotones.close();
-//        return boton;
-//
-//    }
 
 }

@@ -4,12 +4,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -30,6 +30,7 @@ import dam.coso.pfg_ht_serralertas.adapters.PerfilSpinnerAdapter;
 import dam.coso.pfg_ht_serralertas.data.DbAlertas;
 import dam.coso.pfg_ht_serralertas.entidades.Alerta;
 import dam.coso.pfg_ht_serralertas.entidades.Perfil;
+import dam.coso.pfg_ht_serralertas.servicios.BtService;
 
 public class MainActivity extends AppCompatActivity {
     private LinearLayout linearListaAlertas;
@@ -50,6 +51,13 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences preferences = getApplicationContext().getSharedPreferences("DATOS", MODE_PRIVATE);
         idPerfilSeleccionado = preferences.getInt("perfilSeleccionado", 1);
 
+        if (btFuncionando(BtService.class)){
+            Log.d(TAG, "Bt funcionando, no se inicia el servicio");
+        } else {
+            Intent intentServicioBt = new Intent(getApplicationContext(), BtService.class);
+            startService(intentServicioBt);
+            Log.d(TAG, "Iniciaco bt automáticamente");
+        }
 
         db = new DbAlertas(getApplicationContext());
 
@@ -85,6 +93,16 @@ public class MainActivity extends AppCompatActivity {
 
         linearListaAlertas = (LinearLayout) findViewById(R.id.linear_lista_alertas);
 
+    }
+
+    private boolean btFuncionando(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private int obtenerIndicePerfil(int idPerfilSeleccionado) {

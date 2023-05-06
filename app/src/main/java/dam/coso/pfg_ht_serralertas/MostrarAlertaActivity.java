@@ -3,6 +3,9 @@ package dam.coso.pfg_ht_serralertas;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,6 +26,7 @@ public class MostrarAlertaActivity extends AppCompatActivity {
     private Button btnVerAlertas;
     private Button btnCerrarAlerta;
     private String TAG = "Mostrar Alerta";
+    Ringtone sonido;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,17 +95,31 @@ public class MostrarAlertaActivity extends AppCompatActivity {
             Glide.with(this).load(rutaImagenAlerta).fitCenter().into(imagen);
         }
 
+        // Establece el sonido
+        String rutaSonido = getIntent().getStringExtra("sonido");
+        Uri uriSonido;
+        if (rutaSonido.equals("")) {
+            uriSonido = RingtoneManager.getActualDefaultRingtoneUri(getApplicationContext(), RingtoneManager.TYPE_ALARM);
+        } else {
+            uriSonido = Uri.parse(rutaSonido);
+        }
+
+        sonido = RingtoneManager.getRingtone(getApplicationContext(), uriSonido);
+
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 switch (v.getId()) {
                     case R.id.btn_cerrar_alerta:
                         finish();
+                        break;
                     case R.id.btn_ver_alertas:
                         Intent i= new Intent(getApplicationContext(), MainActivity.class);
                         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
                         startActivity(i);
+                        break;
+
 
                 }
             }
@@ -153,6 +171,7 @@ public class MostrarAlertaActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        sonido.stop();
         Log.d(TAG, "onStop()");
     }
 
@@ -171,11 +190,13 @@ public class MostrarAlertaActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        sonido.play();
         Log.d(TAG, "onStart()");
     }
 
     @Override
     protected void onPause() {
+        sonido.stop();
         super.onPause();
         Log.d(TAG, "onPause");
     }

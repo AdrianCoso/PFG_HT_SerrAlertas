@@ -104,14 +104,9 @@ public class BtService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-//        if (intent != null) {
-//            direccionMAC = intent.getStringExtra("direccionMAC");
-//        } else {
-//        }
-
-
         hiloConexion.start();
         return START_STICKY;
+
     }
 
     @Override
@@ -141,7 +136,6 @@ public class BtService extends Service {
 
 
         } else {
-            //Toast.makeText(getBaseContext(), "Bluetooth operativo", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "bt operativo");
         }
     }
@@ -185,24 +179,13 @@ public class BtService extends Service {
 
                     }
 
-
-                    // Procesar el mensaje recibido para saber si debemos mostrar el intent
-//                    DbBotones db = new DbBotones(BtService.this);
-//                    Botones botonPulsado = db.obtenerBotonPorMensaje(mensajeRecibido);
-//
-//                    if (botonPulsado != null) {
-//                        // Lanzar un hilo que gestione la alerta
-//                        HiloAlerta hiloAlerta = new HiloAlerta(getApplicationContext(), botonPulsado);
-//                        hiloAlerta.start();
-//
-//                        //startActivity(alerta);
-//                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                     Log.d(TAG, "No se pudo leer el flujo de entrada");
                     break;
                 }
             }
+            // Al acabar el bucle por haber cerrado la conexión cerramos el flujo de entrada.
             try {
                 input.close();
             } catch (IOException e) {
@@ -210,7 +193,9 @@ public class BtService extends Service {
             }
         }
 
-
+        /**
+         * Cambia el valor del campo que mantiene la ejecución dentro del bucle que recibe los datos.
+         */
         public void cerrarConexion() {
             this.conexionAbierta = false;
         }

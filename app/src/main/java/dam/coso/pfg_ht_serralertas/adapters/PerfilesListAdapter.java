@@ -18,20 +18,6 @@ import dam.coso.pfg_ht_serralertas.entidades.Perfil;
 
 public class PerfilesListAdapter extends BaseAdapter {
     ArrayList<Perfil> listaPerfiles;
-    DataSetObserver dataSetObserver = new DataSetObserver() {
-        @Override
-        public void onChanged() {
-            super.onChanged();
-            recargarLista();
-        }
-    };
-
-    private void recargarLista() {
-        listaPerfiles = null;
-
-    }
-
-    DbAlertas db;
 
     public PerfilesListAdapter(ArrayList<Perfil> listaPerfiles) {
         this.listaPerfiles = listaPerfiles;

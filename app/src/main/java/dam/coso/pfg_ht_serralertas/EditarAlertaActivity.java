@@ -165,6 +165,15 @@ public class EditarAlertaActivity extends AppCompatActivity {
             }
         });
 
+        // Funcionalidad para cancelar la edición de la alerta
+        Button btnCancelar = (Button) findViewById(R.id.btnCancelar);
+        btnCancelar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
     }
 
     @Override
