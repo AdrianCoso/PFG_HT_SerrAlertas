@@ -51,13 +51,13 @@ public class MainActivity extends AppCompatActivity {
         pref = getApplicationContext().getSharedPreferences("DATOS", MODE_PRIVATE);
         idPerfilSeleccionado = pref.getInt("perfilSeleccionado", 1);
 
-//        if (btFuncionando(BtService.class)){
-//            Log.d(TAG, "Bt funcionando, no se inicia el servicio");
-//        } else {
-//            Intent intentServicioBt = new Intent(getApplicationContext(), BtService.class);
-//            startService(intentServicioBt);
-//            Log.d(TAG, "Iniciaco bt automáticamente");
-//        }
+        if (btFuncionando(BtService.class)){
+            Log.d(TAG, "Bt funcionando, no se inicia el servicio");
+        } else {
+            Intent intentServicioBt = new Intent(getApplicationContext(), BtService.class);
+            startService(intentServicioBt);
+            Log.d(TAG, "Iniciaco bt automáticamente");
+        }
 
         DbAlertas dbAlertas = new DbAlertas(getApplicationContext());
 
