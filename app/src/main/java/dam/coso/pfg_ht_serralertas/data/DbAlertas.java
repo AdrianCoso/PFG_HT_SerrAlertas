@@ -14,13 +14,10 @@ import dam.coso.pfg_ht_serralertas.entidades.Perfil;
 
 public class DbAlertas extends DbHelper{
 
-    Context context;
-    DbHelper dbHelper;
     SQLiteDatabase db;
     public DbAlertas(@Nullable Context context) {
         super(context);
-        this.context = context;
-        dbHelper = DbHelper.getInstance(context);
+        DbHelper dbHelper = DbHelper.getInstance(context);
         db = dbHelper.getWritableDatabase();
     }
 
@@ -253,8 +250,6 @@ public class DbAlertas extends DbHelper{
      * @return El número de registros modificados.
      */
     public int modificarAlerta(Alerta alerta) {
-        DbHelper dbHelper = DbHelper.getInstance(context);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(CAMPO_TEXTO, alerta.getTexto());
         values.put(CAMPO_COLOR, alerta.getColor());
@@ -303,8 +298,8 @@ public class DbAlertas extends DbHelper{
     }
 
     public void cerrarBD(){
+        this.close();
         db.close();
-        dbHelper.close();
     }
 
 
