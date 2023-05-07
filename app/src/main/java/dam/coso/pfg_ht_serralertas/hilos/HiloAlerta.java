@@ -23,10 +23,11 @@ public class HiloAlerta extends Thread{
      */
     @Override
     public void run() {
-        DbAlertas db = new DbAlertas(contexto);
         SharedPreferences preferences = contexto.getSharedPreferences("DATOS", Context.MODE_PRIVATE);
         int idPerfil = preferences.getInt("perfilSeleccionado", 1);
+        DbAlertas db = new DbAlertas(contexto);
         Alerta alerta = db.mostrarAlertaRecibida(idPerfil, mensaje);
+        db.cerrarBD();
         Intent intentAlerta = new Intent(contexto, MostrarAlertaActivity.class);
         intentAlerta.putExtra("mensaje", mensaje);
         intentAlerta.putExtra("texto", alerta.getTexto());

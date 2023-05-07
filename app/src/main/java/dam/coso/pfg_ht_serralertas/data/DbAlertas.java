@@ -15,9 +15,13 @@ import dam.coso.pfg_ht_serralertas.entidades.Perfil;
 public class DbAlertas extends DbHelper{
 
     Context context;
+    DbHelper dbHelper;
+    SQLiteDatabase db;
     public DbAlertas(@Nullable Context context) {
         super(context);
         this.context = context;
+        dbHelper = DbHelper.getInstance(context);
+        db = dbHelper.getWritableDatabase();
     }
 
     /**
@@ -28,9 +32,6 @@ public class DbAlertas extends DbHelper{
      */
     public long insertarAlerta(int i){
         long id = 0;
-
-        DbHelper dbHelper =  DbHelper.getInstance(context);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
         try{
 
             String[] textos = new String[] {"Afirmativo", "Negativo", "Agua", "Baño"};
@@ -47,9 +48,6 @@ public class DbAlertas extends DbHelper{
 
         } catch (Exception ex) {
             ex.toString();
-        } finally {
-            db.close();
-            dbHelper.close();
         }
 
         return id;
@@ -64,9 +62,6 @@ public class DbAlertas extends DbHelper{
      */
     public long insertarPerfil(String nombrePerfil) {
         long id= 0;
-        DbHelper dbHelper = DbHelper.getInstance(context);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
         try{
 
             // Insertamos cuatro alertas genéricas a tabla alertas y guardamos cada id;
@@ -85,9 +80,6 @@ public class DbAlertas extends DbHelper{
 
         } catch (Exception ex) {
             ex.toString();
-        } finally {
-            db.close();
-            dbHelper.close();
         }
 
         return id;
@@ -101,8 +93,6 @@ public class DbAlertas extends DbHelper{
     public boolean eliminarPefil(long id) {
         boolean correcto = true;
 
-        DbHelper dbHelper = DbHelper.getInstance(context);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
         String[] idPerfil = new String[] {String.valueOf(id)};
 
         Cursor cursor = db.query(
@@ -135,8 +125,7 @@ public class DbAlertas extends DbHelper{
             int perfilesEliminados = db.delete(TABLE_ALERTAS, where, alarmas);
 
             if (perfilesEliminados != 1) correcto = false;
-            db.close();
-            dbHelper.close();
+
         }
         return correcto;
     }
@@ -149,8 +138,6 @@ public class DbAlertas extends DbHelper{
      * @param lista La lista que vamos a llenar con las alertas de ese perfil.
      */
     public void mostrarAlertasPorPerfil(long idPerfil, ArrayList<Alerta> lista){
-        DbHelper dbHelper =  DbHelper.getInstance(context);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         // Consulta para obtener las alarmas correspondientes al perfil
         String sql =
@@ -171,8 +158,7 @@ public class DbAlertas extends DbHelper{
                         cursor.getInt(5)==1);
                 lista.add(alerta);
             } while (cursor.moveToNext());
-            db.close();
-            dbHelper.close();
+
         }
 
     }
@@ -183,9 +169,6 @@ public class DbAlertas extends DbHelper{
      * @return Alerta con los campos indicados en el registro correspondiente a la id que pasamos.
      */
     public Alerta mostrarAlerta(int id) {
-        DbHelper dbHelper = DbHelper.getInstance(context);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
         Cursor cursor = db.query(
                 TABLE_ALERTAS,
                 null,
@@ -205,8 +188,6 @@ public class DbAlertas extends DbHelper{
                     cursor.getInt(5) == 1);
         }
 
-        db.close();
-        dbHelper.close();
         return alerta;
 
     }
@@ -243,12 +224,10 @@ public class DbAlertas extends DbHelper{
 
     /**
      * Vacía una lista con instancias de clase Perfil y la rellena con las que corresponden a los registros de la tabla
+     * Si por algún motivo la tabla está vacía insserta un registro por defecto y lo pone en la lista.
      * @param listaPerfiles Lista que contendrá las instancias.
      */
     public void cargarPerfilesALista(ArrayList<Perfil> listaPerfiles) {
-        DbHelper dbHelper = DbHelper.getInstance(context);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
         Cursor cursor = db.query(TABLE_PERFILES, new String[] {CAMPO_ID_PERFIL, CAMPO_NOMBRE}, null, null, null, null, null);
         if (cursor.moveToFirst()) {
             listaPerfiles.clear();
@@ -260,9 +239,11 @@ public class DbAlertas extends DbHelper{
                 listaPerfiles.add(perfil);
             } while (cursor.moveToNext());
 
+        } else {
+            insertarPerfil("Perfil por defecto");
+            cargarPerfilesALista(listaPerfiles);
         }
-        db.close();
-        dbHelper.close();
+
     }
 
     /**
@@ -287,8 +268,6 @@ public class DbAlertas extends DbHelper{
                 new String[]{String.valueOf(alerta.getId())}
 
         );
-        db.close();
-        dbHelper.close();
         return i;
     }
 
@@ -301,9 +280,6 @@ public class DbAlertas extends DbHelper{
      * @return
      */
     public Alerta mostrarAlertaRecibida(int idPerfilActivo, String mensajeRecibido) {
-        DbHelper dbHelper = DbHelper.getInstance(context);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
         String sql =
                 "SELECT a.* " +
                         "FROM "+TABLE_ALERTAS+" a " +
@@ -324,6 +300,11 @@ public class DbAlertas extends DbHelper{
         } else {
             return null;
         }
+    }
+
+    public void cerrarBD(){
+        db.close();
+        dbHelper.close();
     }
 
 

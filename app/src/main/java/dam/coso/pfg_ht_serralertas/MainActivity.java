@@ -38,8 +38,8 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Perfil> listaPerfiles = new ArrayList<Perfil>();
     private ArrayList<Alerta> listaAlertas = new ArrayList<Alerta>();
     int idPerfilSeleccionado;
-    private DbAlertas db;
     private String TAG = "MainActivity";
+    private SharedPreferences pref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,26 +48,24 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Obtener índice de perfil seleccionado por preferencias
-        SharedPreferences preferences = getApplicationContext().getSharedPreferences("DATOS", MODE_PRIVATE);
-        idPerfilSeleccionado = preferences.getInt("perfilSeleccionado", 1);
+        pref = getApplicationContext().getSharedPreferences("DATOS", MODE_PRIVATE);
+        idPerfilSeleccionado = pref.getInt("perfilSeleccionado", 1);
 
-        if (btFuncionando(BtService.class)){
-            Log.d(TAG, "Bt funcionando, no se inicia el servicio");
-        } else {
-            Intent intentServicioBt = new Intent(getApplicationContext(), BtService.class);
-            startService(intentServicioBt);
-            Log.d(TAG, "Iniciaco bt automáticamente");
-        }
+//        if (btFuncionando(BtService.class)){
+//            Log.d(TAG, "Bt funcionando, no se inicia el servicio");
+//        } else {
+//            Intent intentServicioBt = new Intent(getApplicationContext(), BtService.class);
+//            startService(intentServicioBt);
+//            Log.d(TAG, "Iniciaco bt automáticamente");
+//        }
 
-        db = new DbAlertas(getApplicationContext());
+        DbAlertas dbAlertas = new DbAlertas(getApplicationContext());
 
-        db.cargarPerfilesALista(listaPerfiles);
-        if (listaPerfiles.size() == 0) {
-            db.insertarPerfil("Perfil por defecto");
-            db.cargarPerfilesALista(listaPerfiles);
-        }
+        dbAlertas.cargarPerfilesALista(listaPerfiles);
+        dbAlertas.cerrarBD();
         int indicePerfilSeleccionado = obtenerIndicePerfil(idPerfilSeleccionado);
 
+        linearListaAlertas = (LinearLayout) findViewById(R.id.linear_lista_alertas);
 
         // Cargar spinner
         PerfilSpinnerAdapter adapter = new PerfilSpinnerAdapter(listaPerfiles);
@@ -78,9 +76,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 long idPerfil = listaPerfiles.get(position).getIdPerfil();
-                SharedPreferences pref = getApplicationContext().getSharedPreferences("DATOS", MODE_PRIVATE);
+
                 pref.edit().putInt("perfilSeleccionado", (int) idPerfil).apply();
+                DbAlertas db = new DbAlertas(getApplicationContext());
                 db.mostrarAlertasPorPerfil(idPerfil, listaAlertas);
+                db.cerrarBD();
                 cargarAlertas();
 
             }
@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        linearListaAlertas = (LinearLayout) findViewById(R.id.linear_lista_alertas);
+
 
     }
 

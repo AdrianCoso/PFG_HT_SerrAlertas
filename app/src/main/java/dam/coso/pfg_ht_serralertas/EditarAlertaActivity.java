@@ -30,7 +30,6 @@ public class EditarAlertaActivity extends AppCompatActivity {
     Alerta alerta;
     View vistaPreviaColor;
     int colorDefecto;
-    DbAlertas db;
     private ActivityResultLauncher<Intent> lanzadorSelectorFotos;
     private ActivityResultLauncher<Intent> lanzadorSelectorTonos;
     private ImageView vistaPreviaPictograma;
@@ -49,10 +48,12 @@ public class EditarAlertaActivity extends AppCompatActivity {
         int iBoton = getIntent().getIntExtra("iBoton", -1);
 
         // Abrir base de datos
-        db = new DbAlertas(getApplicationContext());
+        DbAlertas db = new DbAlertas(getApplicationContext());
 
         // Instanciar la alerta seleccionada mediante la base de datos
         alerta = db.mostrarAlerta(idAlerta);
+        db.cerrarBD();
+
 
         // Componente para escribir el texto de alerta
         EditText etTextoAlerta = (EditText) findViewById(R.id.et_texto_alerta);
@@ -153,7 +154,9 @@ public class EditarAlertaActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 alerta.setTexto(String.valueOf(etTextoAlerta.getText()));
+                DbAlertas db = new DbAlertas(getApplicationContext());
                 int id = db.modificarAlerta(alerta);
+                db.cerrarBD();
                 if (id == 1) {
                     Intent intent = new Intent(EditarAlertaActivity.this, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);

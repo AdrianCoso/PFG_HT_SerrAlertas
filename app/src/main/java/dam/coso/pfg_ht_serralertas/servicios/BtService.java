@@ -112,7 +112,10 @@ public class BtService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        hiloConexion.cerrarConexion();
+        if (hiloConexion.isAlive()) {
+            hiloConexion.cerrarConexion();
+
+        }
         try {
             socketBt.close();
         } catch (IOException e) {

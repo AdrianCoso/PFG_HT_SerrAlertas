@@ -20,7 +20,6 @@ import dam.coso.pfg_ht_serralertas.data.DbAlertas;
 import dam.coso.pfg_ht_serralertas.entidades.Perfil;
 
 public class PerfilesActivity extends AppCompatActivity {
-    DbAlertas db;
     ArrayList<Perfil> listaPerfiles = new ArrayList<>();
     private String TAG = "PerfilesActivity";
 
@@ -30,13 +29,15 @@ public class PerfilesActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate()");
         setContentView(R.layout.activity_perfiles);
 
-        // Abrir la base de datos
-        db = new DbAlertas(getApplicationContext());
-
         // Inicializar la lista
         ListView lvPerfiles = (ListView) findViewById(R.id.lv_perfiles);
 
+        // Abrir la base de datos
+        DbAlertas db = new DbAlertas(getApplicationContext());
+
         db.cargarPerfilesALista(listaPerfiles);
+        db.cerrarBD();
+
         PerfilesListAdapter adapter = new PerfilesListAdapter(listaPerfiles);
         lvPerfiles.setAdapter(adapter);
 
@@ -65,8 +66,10 @@ public class PerfilesActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 String nombrePerfil = etNombreNuevoPerfil.getText().toString();
 
+                DbAlertas db = new DbAlertas(getApplicationContext());
                 db.insertarPerfil(nombrePerfil);
                 db.cargarPerfilesALista(listaPerfiles);
+                db.cerrarBD();
             }
         });
         builder.setNegativeButton(R.string.btn_cancelar_nuevo_perfil, new DialogInterface.OnClickListener() {

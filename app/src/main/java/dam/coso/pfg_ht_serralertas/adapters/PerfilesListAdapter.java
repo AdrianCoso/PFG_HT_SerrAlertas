@@ -58,12 +58,15 @@ public class PerfilesListAdapter extends BaseAdapter {
                         .setPositiveButton("Eliminar", (dialog, which) -> {
 
                             long id = PerfilesListAdapter.this.getItemId(position);
-                            try (DbAlertas db = new DbAlertas(view.getContext())) {
+                            DbAlertas db = new DbAlertas(view.getContext());
+                            try {
                                 db.eliminarPefil(id);
                                 db.cargarPerfilesALista(listaPerfiles);
                                 notifyDataSetChanged();
                             } catch (Exception e) {
                                 e.printStackTrace();
+                            } finally {
+                                db.cerrarBD();
                             }
                         })
                         .setNegativeButton("Cancelar", null)
