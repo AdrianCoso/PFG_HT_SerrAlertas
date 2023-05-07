@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
                 Glide.with(this).load(uriImagen).into(ivPictograma);
             }
 
-            CardView color = (CardView) view.findViewById(R.id.cv_color_alerta);
+            CardView color = (CardView) view.findViewById(R.id.vistaPreviaColor);
             color.setCardBackgroundColor(alerta.getColor());
             view.setLayoutParams(params);
             int finalI = i;

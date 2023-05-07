@@ -3,6 +3,7 @@ package dam.coso.pfg_ht_serralertas;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,7 +30,7 @@ import yuku.ambilwarna.AmbilWarnaDialog;
 public class EditarAlertaActivity extends AppCompatActivity {
     private static final String TAG = "EditarAlertaActivity";
     Alerta alerta;
-    View vistaPreviaColor;
+    CardView vistaPreviaColor;
     int colorDefecto;
     private ActivityResultLauncher<Intent> lanzadorSelectorFotos;
     private ActivityResultLauncher<Intent> lanzadorSelectorTonos;
@@ -61,14 +63,14 @@ public class EditarAlertaActivity extends AppCompatActivity {
 
         // Componente para seleccionar el color de fondo
         colorDefecto = alerta.getColor();
-        vistaPreviaColor = (View) findViewById(R.id.vistaPreviaColor);
+        vistaPreviaColor = (CardView) findViewById(R.id.vistaPreviaColor);
         vistaPreviaColor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 abrirSelectorColor();
             }
         });
-        vistaPreviaColor.setBackgroundColor(alerta.getColor());
+        vistaPreviaColor.setCardBackgroundColor(alerta.getColor());
 
         // Componente para seleccionar el pictograma
         vistaPreviaPictograma = (ImageView) findViewById(R.id.vistaPreviaPicto);
@@ -112,7 +114,7 @@ public class EditarAlertaActivity extends AppCompatActivity {
         ringtone = RingtoneManager.getRingtone(EditarAlertaActivity.this, uriTonoActual);
         nombreTono = ringtone.getTitle(EditarAlertaActivity.this);
         tvNombreTono.setText(nombreTono);
-        Button btnSonido = (Button) findViewById(R.id.btnSeleccionAudio);
+        ImageButton btnSonido = (ImageButton) findViewById(R.id.btnSeleccionAudio);
         lanzadorSelectorTonos = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -135,7 +137,7 @@ public class EditarAlertaActivity extends AppCompatActivity {
             }
         });
         // Botón para probar el sonido seleccionado
-        Button btnReproducir = (Button) findViewById(R.id.btn_reproducir_audio);
+        ImageButton btnReproducir = (ImageButton) findViewById(R.id.btn_reproducir_audio);
         btnReproducir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -239,7 +241,7 @@ public class EditarAlertaActivity extends AppCompatActivity {
 
                         // now change the picked color
                         // preview box to mDefaultColor
-                        vistaPreviaColor.setBackgroundColor(colorDefecto);
+                        vistaPreviaColor.setCardBackgroundColor(colorDefecto);
                         alerta.setColor(colorDefecto);
                     }
                 });

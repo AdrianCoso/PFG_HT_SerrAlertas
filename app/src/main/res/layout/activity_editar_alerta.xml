@@ -15,16 +15,17 @@
 
         <TextView
             android:id="@+id/tvTextoAlerta"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_weight="1"
+            android:gravity="center"
             android:text="@string/texto_alerta"
             android:textStyle="bold" />
 
         <EditText
             android:id="@+id/et_texto_alerta"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_weight="1"
             android:ems="10"
@@ -40,7 +41,7 @@
 
         <TextView
             android:id="@+id/tvSeleccionAudio"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="8dp"
             android:layout_weight="1"
@@ -50,33 +51,29 @@
 
         <TextView
             android:id="@+id/tvNombreTono"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="8dp"
             android:layout_weight="1"
             android:gravity="center"
             android:text="TextView" />
 
-        <Button
+        <ImageButton
             android:id="@+id/btnSeleccionAudio"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
             android:layout_weight="1"
-            android:backgroundTint="#A9B5E3"
-            android:text="Seleccionar"
-            android:textColor="@color/black"
-            android:textSize="15dp"
-            app:iconTint="@color/purple_700"
-            app:strokeColor="#6376BF"
-            app:strokeWidth="4dp" />
+            android:backgroundTint="@color/purple_500"
+            app:srcCompat="@android:drawable/ic_menu_edit" />
 
-        <Button
+        <ImageButton
             android:id="@+id/btn_reproducir_audio"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
             android:layout_weight="1"
-            app:icon="@android:drawable/ic_media_play" />
+            android:background="@color/purple_200"
+            app:srcCompat="@android:drawable/ic_media_play" />
     </LinearLayout>
 
     <LinearLayout
@@ -86,20 +83,21 @@
 
         <TextView
             android:id="@+id/tvColorFondo"
-            android:layout_width="54dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="30dp"
             android:layout_weight="1"
+            android:gravity="center"
             android:text="@string/seleccion_color_alerta"
             android:textStyle="bold" />
 
-        <View
+        <androidx.cardview.widget.CardView
             android:id="@+id/vistaPreviaColor"
-            android:layout_width="21dp"
-            android:layout_height="57dp"
-            android:layout_margin="8dp"
-            android:layout_weight="1" />
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="15dp"
+            android:layout_weight="1"
+            app:cardCornerRadius="5dp" />
 
     </LinearLayout>
 
@@ -110,7 +108,7 @@
 
         <TextView
             android:id="@+id/tvSeleccionPicto"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="8dp"
             android:layout_weight="1"
@@ -120,7 +118,7 @@
 
         <ImageView
             android:id="@+id/vistaPreviaPicto"
-            android:layout_width="110dp"
+            android:layout_width="match_parent"
             android:layout_height="110dp"
             android:layout_weight="1"
             tools:srcCompat="@tools:sample/avatars" />
@@ -134,7 +132,7 @@
 
         <Button
             android:id="@+id/btnCancelar"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_weight="1"
@@ -147,7 +145,7 @@
 
         <Button
             android:id="@+id/btnGuardar"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:layout_weight="1"
