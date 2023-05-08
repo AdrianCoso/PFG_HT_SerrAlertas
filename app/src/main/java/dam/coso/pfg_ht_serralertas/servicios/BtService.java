@@ -60,6 +60,7 @@ public class BtService extends Service {
             Log.d(TAG, "socket creado");
         } catch (IOException e) {
             Log.d(TAG, "Fallo al crear el socket");
+            e.printStackTrace();
         }
 
         // Conectar al socket
@@ -74,7 +75,7 @@ public class BtService extends Service {
             } else return;
         } catch (IOException e) {
             Log.d(TAG, "No se pudo conectar al socket");
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
 
         hiloConexion = new HiloConexion(socketBt);
@@ -119,7 +120,7 @@ public class BtService extends Service {
         try {
             socketBt.close();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 
@@ -148,14 +149,14 @@ public class BtService extends Service {
         private boolean conexionAbierta;
 
         public HiloConexion(BluetoothSocket socket) {
-            InputStream tmpInput;
+            InputStream tmpInput = null;
 
             try {
                 tmpInput = socket.getInputStream();
                 Log.d(TAG, "obteniendo flujo de entrada");
             } catch (IOException e) {
                 Log.d(TAG, "no es posible obtener flujo de entrada");
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
             input = tmpInput;
             conexionAbierta = true;
@@ -192,7 +193,7 @@ public class BtService extends Service {
             try {
                 input.close();
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
         }
 

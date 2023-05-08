@@ -56,12 +56,4 @@ public class Alerta {
         this.rutaSonido = rutaSonido;
     }
 
-    public boolean isActiva() {
-        return activa;
-    }
-
-    public void setActiva(boolean activa) {
-        this.activa = activa;
-    }
-
 }
