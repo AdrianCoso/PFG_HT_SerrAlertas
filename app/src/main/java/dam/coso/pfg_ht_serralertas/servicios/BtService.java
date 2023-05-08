@@ -179,7 +179,7 @@ public class BtService extends Service {
                     // si es una de las letras de pulsación
                     if (mensajeRecibido.equals("A") || mensajeRecibido.equals("C") || mensajeRecibido.equals("E") || mensajeRecibido.equals("G")) {
                         HiloAlerta hiloAlerta = new HiloAlerta(getApplicationContext(), mensajeRecibido);
-                        hiloAlerta.run();
+                        hiloAlerta.start();
 
                     }
 
