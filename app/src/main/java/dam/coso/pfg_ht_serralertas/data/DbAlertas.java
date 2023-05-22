@@ -9,34 +9,34 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 
+import dam.coso.pfg_ht_serralertas.R;
 import dam.coso.pfg_ht_serralertas.entidades.Alerta;
 import dam.coso.pfg_ht_serralertas.entidades.Perfil;
 
 public class DbAlertas extends DbHelper{
 
     SQLiteDatabase db;
+    Context context;
     public DbAlertas(@Nullable Context context) {
         super(context);
         DbHelper dbHelper = DbHelper.getInstance(context);
         db = dbHelper.getWritableDatabase();
+        this.context = context;
     }
 
     /**
      * Inserta una alerta genérica según el número de botón al que queda asociada.
-     * @param i Determina el texto que se asocia a la alerta por defecto. 0 Afirmativo, 1 Negativo, 2 Agua, 3 Baño.
+     * @param texto El texto que llevará asociado la alerta creada.
+     * @param color El color de fondo que se mostrará con la alerta creada.
      * @return La id generada para la la alerta insertada. 0 si ha habido un error con la base de
      * datos, -1 si ha fallado la inserción.
      */
-    public long insertarAlerta(int i){
+    public long insertarAlerta(String texto, int color){
         long id = 0;
         try{
-
-            String[] textos = new String[] {"Afirmativo", "Negativo", "Agua", "Baño"};
-            String texto = textos[i];
-
             ContentValues values = new ContentValues();
             values.put(CAMPO_TEXTO,texto);
-            values.put(CAMPO_COLOR,0);
+            values.put(CAMPO_COLOR,color);
             values.put(CAMPO_IMAGEN,"");
             values.put(CAMPO_AUDIO,"");
             values.put(CAMPO_ACTIVA, 1);
@@ -62,9 +62,11 @@ public class DbAlertas extends DbHelper{
         try{
 
             // Insertamos cuatro alertas genéricas a tabla alertas y guardamos cada id;
+            String[] textos = context.getResources().getStringArray(R.array.textos_predefinidos);
+            int[] coloresFondo = context.getResources().getIntArray(R.array.colores_fondo);
             long[] ids = new long[4];
             for (int i = 0; i < ids.length; i++) {
-                ids[i] = insertarAlerta(i);
+                ids[i] = insertarAlerta(textos[i], coloresFondo[i]);
             }
 
             ContentValues values = new ContentValues();

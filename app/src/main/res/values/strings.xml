@@ -23,4 +23,8 @@
     <string name="borrar_perfil">Borrar perfil</string>
     <string name="btn_cerrar_alerta">Cerrar</string>
     <string name="btn_ver_alertas">Ver alertas</string>
+    <string name="afirmativo">Afirmativo</string>
+    <string name="negativo">Negativo</string>
+    <string name="agua">Agua</string>
+    <string name="banyo">Baño</string>
 </resources>

@@ -6,4 +6,16 @@
         <item>@drawable/beber</item>
         <item>@drawable/servicio</item>
     </array>
+    <array name="colores_fondo">
+        <item>@color/rojo</item>
+        <item>@color/verde</item>
+        <item>@color/azul</item>
+        <item>@color/amarillo</item>
+    </array>
+    <array name="textos_predefinidos">
+        <item>@string/afirmativo</item>
+        <item>@string/negativo</item>
+        <item>@string/agua</item>
+        <item>@string/banyo</item>
+    </array>
 </resources>
