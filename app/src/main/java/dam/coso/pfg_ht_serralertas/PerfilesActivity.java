@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -66,10 +67,16 @@ public class PerfilesActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 String nombrePerfil = etNombreNuevoPerfil.getText().toString();
 
-                DbAlertas db = new DbAlertas(getApplicationContext());
-                db.insertarPerfil(nombrePerfil);
-                db.cargarPerfilesALista(listaPerfiles);
-                db.cerrarBD();
+                if (nombrePerfil.equals("")){
+                    Toast.makeText(getApplicationContext(), "Nombre vacío. No se creó el perfil", Toast.LENGTH_LONG);
+
+                } else {
+                    DbAlertas db = new DbAlertas(getApplicationContext());
+                    db.insertarPerfil(nombrePerfil);
+                    db.cargarPerfilesALista(listaPerfiles);
+                    db.cerrarBD();
+
+                }
             }
         });
         builder.setNegativeButton(R.string.btn_cancelar_nuevo_perfil, new DialogInterface.OnClickListener() {
