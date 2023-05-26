@@ -85,14 +85,7 @@ public class BtService extends Service {
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
-        // crear la notificación con un canal propio
-        CharSequence name = "Notificación de conexión";
-        String description = "Informa de la conexión Bluetooth con la botonera";
-        int importance = NotificationManager.IMPORTANCE_LOW;
-        NotificationChannel channel = new NotificationChannel("mi_canal_id", name, importance);
-        channel.setDescription(description);
-        NotificationManager notificationManager = getSystemService(NotificationManager.class);
-        notificationManager.createNotificationChannel(channel);
+
         Notification notification = new Notification.Builder(this, "mi_canal_id")
                 .setContentTitle("Escuchando el dispositivo " + dispositivo.getName())
                 .setContentText("Pulsa para abrir la aplicación")

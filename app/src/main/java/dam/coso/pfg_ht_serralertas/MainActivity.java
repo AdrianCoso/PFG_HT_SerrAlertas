@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import android.app.ActivityManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -47,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate()");
         setContentView(R.layout.activity_main);
 
+        crearCanalNotificacion();
+
         // Obtener índice de perfil seleccionado por preferencias
         pref = getApplicationContext().getSharedPreferences("DATOS", MODE_PRIVATE);
         idPerfilSeleccionado = pref.getInt("perfilSeleccionado", 1);
@@ -56,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Intent intentServicioBt = new Intent(getApplicationContext(), BtService.class);
             startService(intentServicioBt);
-            Log.d(TAG, "Iniciaco bt automáticamente");
+            Log.d(TAG, "Iniciado bt automáticamente");
         }
 
         DbAlertas dbAlertas = new DbAlertas(getApplicationContext());
@@ -93,6 +97,20 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    }
+
+    /**
+     * Crea un canal de notificaciones para mostrar que el dispositivo seleccionado está conectado.
+     */
+    private void crearCanalNotificacion() {
+        // crear la notificación con un canal propio
+        CharSequence name = "Notificación de conexión";
+        String description = "Informa de la conexión Bluetooth con la botonera";
+        int importance = NotificationManager.IMPORTANCE_LOW;
+        NotificationChannel channel = new NotificationChannel("mi_canal_id", name, importance);
+        channel.setDescription(description);
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
     }
 
     private boolean btFuncionando(Class<?> serviceClass) {
