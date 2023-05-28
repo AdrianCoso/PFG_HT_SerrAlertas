@@ -8,11 +8,6 @@
         android:title="@string/options_bluetooth"
         app:showAsAction="never" />
     <item
-        android:id="@+id/MnOpNotifications"
-        android:orderInCategory="1"
-        android:title="@string/options_notifications"
-        app:showAsAction="never" />
-    <item
         android:id="@+id/MnOpProfile"
         android:orderInCategory="1"
         android:title="@string/options_profiles"

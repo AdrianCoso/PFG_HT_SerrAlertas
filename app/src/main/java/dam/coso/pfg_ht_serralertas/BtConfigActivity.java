@@ -82,6 +82,7 @@ public class BtConfigActivity extends AppCompatActivity {
         btnDesconectarBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                getApplicationContext().getSharedPreferences("DATOS", MODE_PRIVATE).edit().putBoolean("btConectado", false).apply();
                 Intent intentServicioBt = new Intent(getApplicationContext(), BtService.class);
                 stopService(intentServicioBt);
             }

@@ -11,6 +11,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.IBinder;
 import android.util.Log;
@@ -31,6 +32,7 @@ public class BtService extends Service {
     private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private BluetoothSocket socketBt = null;
     private HiloConexion hiloConexion;
+    private String mensajeNotificacion = "";
     String TAG = "btservice";
 
     public BtService() {
@@ -69,36 +71,48 @@ public class BtService extends Service {
         }
         try {
             socketBt.connect();
-            if (socketBt.isConnected()) {
-                Log.d(TAG, "Socket conectado");
-                Toast.makeText(this, "Conectado", Toast.LENGTH_SHORT).show();
-            } else return;
         } catch (IOException e) {
             Log.d(TAG, "No se pudo conectar al socket");
             e.printStackTrace();
         }
 
-        hiloConexion = new HiloConexion(socketBt);
+        SharedPreferences preferences = getApplicationContext().getSharedPreferences("DATOS", MODE_PRIVATE);
+        if (socketBt.isConnected()) {
+            Log.d(TAG, "Socket conectado");
+            Toast.makeText(this, "Conectado", Toast.LENGTH_SHORT).show();
+            hiloConexion = new HiloConexion(socketBt);
+            mensajeNotificacion = "Escuchando el dispositivo " + dispositivo.getName();
+            preferences.edit().putBoolean("btConectado", true).apply();
+        } else {
+            Toast.makeText(getApplicationContext(), "No se pudo conectar al dispositivo.", Toast.LENGTH_LONG);
+            mensajeNotificacion = "Ningún dispositivo conectado.";
+            preferences.edit().putBoolean("btConectado", false).apply();
+        }
 
-        // Crear una notificación que abra la portada de la aplicación al tocarla
-        Intent notificationIntent = new Intent(this, MainActivity.class);
-        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
 
-        Notification notification = new Notification.Builder(this, "mi_canal_id")
-                .setContentTitle("Escuchando el dispositivo " + dispositivo.getName())
-                .setContentText("Pulsa para abrir la aplicación")
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentIntent(pendingIntent)
-                .setOngoing(true)
-                .build();
-        startForeground(1, notification);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        hiloConexion.start();
+        if (hiloConexion != null) {
+            hiloConexion.start();
+            // Crear una notificación que abra la portada de la aplicación al tocarla
+            Intent notificationIntent = new Intent(this, MainActivity.class);
+            notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+
+
+            Notification notification = new Notification.Builder(this, "mi_canal_id")
+                    .setContentTitle(mensajeNotificacion)
+                    .setContentText("Pulsa para abrir la aplicación")
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentIntent(pendingIntent)
+                    .setOngoing(true)
+                    .build();
+            startForeground(1, notification);
+
+        }
         return START_STICKY;
 
     }
@@ -106,14 +120,16 @@ public class BtService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (hiloConexion.isAlive()) {
+        if (hiloConexion != null && hiloConexion.isAlive()) {
             hiloConexion.cerrarConexion();
 
         }
-        try {
-            socketBt.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (socketBt.isConnected()) {
+            try {
+                socketBt.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

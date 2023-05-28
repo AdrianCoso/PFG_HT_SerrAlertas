@@ -54,9 +54,12 @@ public class MainActivity extends AppCompatActivity {
         // Obtener índice de perfil seleccionado por preferencias
         pref = getApplicationContext().getSharedPreferences("DATOS", MODE_PRIVATE);
         idPerfilSeleccionado = pref.getInt("perfilSeleccionado", 1);
+        boolean btConectado = pref.getBoolean("btConectado", true);
 
         if (btFuncionando(BtService.class)){
             Log.d(TAG, "Bt funcionando, no se inicia el servicio");
+        } else if (!btConectado){
+            Log.d(TAG, "Bt desconectado por el usuario");
         } else {
             Intent intentServicioBt = new Intent(getApplicationContext(), BtService.class);
             startService(intentServicioBt);
@@ -148,11 +151,6 @@ public class MainActivity extends AppCompatActivity {
                 // Crear el intent para ir a la actividad que gestiona el bluetooth
                 i = new Intent(this, BtConfigActivity.class);
                 startActivity(i);
-                return true;
-
-
-            case R.id.MnOpNotifications:
-                Log.d(TAG, "Pulsada opción notificaciones");
                 return true;
 
             case R.id.MnOpProfile:
