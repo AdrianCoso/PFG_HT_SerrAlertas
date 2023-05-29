@@ -8,7 +8,7 @@ import androidx.annotation.Nullable;
 
 public class DbHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 9;
     private static final String DATABASE_NAME = "SerrAlertas.db";
     public static final String TABLE_ALERTAS = "Alertas";
     public static final String CAMPO_ID_ALERTA = "id_alerta";
