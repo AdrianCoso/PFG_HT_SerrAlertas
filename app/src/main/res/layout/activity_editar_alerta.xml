@@ -64,6 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:backgroundTint="@color/purple_500"
+            android:contentDescription="@string/seleccionar_audio"
             app:srcCompat="@android:drawable/ic_menu_edit" />
 
         <ImageButton
@@ -73,6 +74,7 @@
             android:layout_margin="5dp"
             android:layout_weight="1"
             android:background="@color/purple_200"
+            android:contentDescription="@string/reproducir"
             app:srcCompat="@android:drawable/ic_media_play" />
     </LinearLayout>
 
@@ -139,7 +141,7 @@
             android:backgroundTint="#E8A2E1"
             android:text="@string/cancelar"
             android:textColor="@color/black"
-            android:textSize="15dp"
+            android:textSize="15sp"
             app:strokeColor="#EF1DDA"
             app:strokeWidth="4dp" />
 
@@ -152,7 +154,7 @@
             android:backgroundTint="#ECEF9D"
             android:text="@string/guardar"
             android:textColor="@color/black"
-            android:textSize="15dp"
+            android:textSize="15sp"
             app:strokeColor="#E9EF2F"
             app:strokeWidth="4dp" />
     </LinearLayout>

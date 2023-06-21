@@ -1,10 +1,5 @@
 package dam.coso.pfg_ht_serralertas;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-import androidx.gridlayout.widget.GridLayout;
-
 import android.app.ActivityManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -18,13 +13,15 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.gridlayout.widget.GridLayout;
 
 import com.bumptech.glide.Glide;
 
@@ -78,9 +75,6 @@ public class MainActivity extends AppCompatActivity {
 
         //linearListaAlertas = (LinearLayout) findViewById(R.id.linear_lista_alertas);
         gridListaAlertas = (GridLayout) findViewById(R.id.grid_alertas);
-//        gridListaAlertas.setColumnCount(R.integer.columnas);
-//        gridListaAlertas.setRowCount(R.integer.filas);
-
 
         // Cargar spinner
         PerfilSpinnerAdapter adapter = new PerfilSpinnerAdapter(listaPerfiles);
@@ -176,15 +170,10 @@ public class MainActivity extends AppCompatActivity {
     private void cargarAlertas() {
         int i = 0;
         gridListaAlertas.removeAllViews();
-        //linearListaAlertas.removeAllViews();
         LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
 
         TypedArray arrPictogramas = getResources().obtainTypedArray(R.array.array_pictogramas);
-        //LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,0);
-        //GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-        //GridLayout.Spec spec = new GridLayout.Spec(true,1, 1, GridLayout.Alignment.class
 
-        //params.weight = 1;
         for (Alerta alerta :
                 listaAlertas) {
             View view = inflater.inflate(R.layout.layout_alerta, gridListaAlertas, false);
@@ -205,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
 
             CardView color = (CardView) view.findViewById(R.id.vistaPreviaColor);
             color.setCardBackgroundColor(alerta.getColor());
-            //view.setLayoutParams(params);
+
             int finalI = i + 1;
             view.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -27,4 +27,6 @@
     <string name="negativo">Negativo</string>
     <string name="agua">Agua</string>
     <string name="banyo">Baño</string>
+    <string name="reproducir">Reproducir</string>
+    <string name="seleccionar_audio">Seleccionar audio</string>
 </resources>
