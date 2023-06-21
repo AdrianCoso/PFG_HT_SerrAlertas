@@ -3,6 +3,7 @@ package dam.coso.pfg_ht_serralertas;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.gridlayout.widget.GridLayout;
 
 import android.app.ActivityManager;
 import android.app.NotificationChannel;
@@ -19,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -35,7 +37,9 @@ import dam.coso.pfg_ht_serralertas.entidades.Perfil;
 import dam.coso.pfg_ht_serralertas.servicios.BtService;
 
 public class MainActivity extends AppCompatActivity {
-    private LinearLayout linearListaAlertas;
+    //private LinearLayout linearListaAlertas;
+
+    private GridLayout gridListaAlertas;
     private Spinner spinnerPerfiles;
     private ArrayList<Perfil> listaPerfiles = new ArrayList<Perfil>();
     private ArrayList<Alerta> listaAlertas = new ArrayList<Alerta>();
@@ -72,7 +76,11 @@ public class MainActivity extends AppCompatActivity {
         dbAlertas.cerrarBD();
         int indicePerfilSeleccionado = obtenerIndicePerfil(idPerfilSeleccionado);
 
-        linearListaAlertas = (LinearLayout) findViewById(R.id.linear_lista_alertas);
+        //linearListaAlertas = (LinearLayout) findViewById(R.id.linear_lista_alertas);
+        gridListaAlertas = (GridLayout) findViewById(R.id.grid_alertas);
+//        gridListaAlertas.setColumnCount(R.integer.columnas);
+//        gridListaAlertas.setRowCount(R.integer.filas);
+
 
         // Cargar spinner
         PerfilSpinnerAdapter adapter = new PerfilSpinnerAdapter(listaPerfiles);
@@ -166,19 +174,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void cargarAlertas() {
-        int i = 1;
-        linearListaAlertas.removeAllViews();
+        int i = 0;
+        gridListaAlertas.removeAllViews();
+        //linearListaAlertas.removeAllViews();
         LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
 
         TypedArray arrPictogramas = getResources().obtainTypedArray(R.array.array_pictogramas);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,0);
-        params.weight = 1;
+        //LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,0);
+        //GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+        //GridLayout.Spec spec = new GridLayout.Spec(true,1, 1, GridLayout.Alignment.class
+
+        //params.weight = 1;
         for (Alerta alerta :
                 listaAlertas) {
-            View view = inflater.inflate(R.layout.layout_alerta, linearListaAlertas, false);
+            View view = inflater.inflate(R.layout.layout_alerta, gridListaAlertas, false);
 
             TextView boton = (TextView) view.findViewById(R.id.tv_boton_alerta);
-            boton.setText("Botón "+ i);
+            boton.setText("Botón "+ (i+1));
 
             TextView nombre = (TextView) view.findViewById(R.id.tv_nombre_alerta);
             nombre.setText(alerta.getTexto());
@@ -186,15 +198,15 @@ public class MainActivity extends AppCompatActivity {
             ImageView ivPictograma = (ImageView) view.findViewById(R.id.iv_imagen_alerta);
             String uriImagen = alerta.getRutaImagen();
             if (uriImagen.equals("")) {
-                Glide.with(this).load(arrPictogramas.getDrawable(i-1)).fitCenter().into(ivPictograma);
+                Glide.with(this).load(arrPictogramas.getDrawable(i)).fitCenter().into(ivPictograma);
             } else {
                 Glide.with(this).load(uriImagen).into(ivPictograma);
             }
 
             CardView color = (CardView) view.findViewById(R.id.vistaPreviaColor);
             color.setCardBackgroundColor(alerta.getColor());
-            view.setLayoutParams(params);
-            int finalI = i;
+            //view.setLayoutParams(params);
+            int finalI = i + 1;
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -205,7 +217,15 @@ public class MainActivity extends AppCompatActivity {
                     v.getContext().startActivity(intent);
                 }
             });
-            linearListaAlertas.addView(view);
+            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+            params.height = 0;
+            params.width = 0;
+            int columnaActual = i % gridListaAlertas.getColumnCount();
+            int filaActual = i / gridListaAlertas.getColumnCount();
+            params.columnSpec = GridLayout.spec(columnaActual,1,1);
+            params.rowSpec = GridLayout.spec(filaActual,1,1);
+            view.setLayoutParams(params);
+            gridListaAlertas.addView(view);
             i++;
         }
 
